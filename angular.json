@@ -120,5 +120,8 @@
       }
     }
   },
-  "defaultProject": "practica2"
+  "defaultProject": "practica2",
+  "cli": {
+    "analytics": false
+  }
 }

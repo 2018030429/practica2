@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validator, Validators } from "@angular/forms";
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 
 @Component({
   selector: 'app-root',
@@ -21,17 +21,21 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.builder.group({
-      codigo: [],
+      codigo: [ '' ],
       descripcion: [ '', [
-        Validators.pattern("[a-zA-Z ]*"),
+        Validators.pattern("[a-zA-Z | áéíóú]*"),
         Validators.required
       ]],
-      precio: [ '', Validators.required ]
-    });
+      precio: [ '', [
+        Validators.pattern("^[0-9]+\.?[0-9]+$"),
+        Validators.required
+      ]]
+    });    
   }
 
   deleteArticulo( idx:number ) {
-    this.articulos.splice( idx, 1 );
+    if (confirm('¿Desea eliminar éste articulo?'))
+      this.articulos.splice( idx, 1 )
   }
 
   getArticulo( idx:number ) {
@@ -39,10 +43,18 @@ export class AppComponent implements OnInit {
     this.form.patchValue({ codigo: idx + 1, descripcion: foo.descripcion, precio: foo.precio });
   }
 
-  patchArticulo( ) {
+  patchArticulo() {
     let art = this.form.value; 
     this.articulos[ art.codigo - 1 ].descripcion = art.descripcion;
-    this.articulos[ art.codigo - 1].precio = art.precio;
+    this.articulos[ art.codigo - 1 ].precio = art.precio;
+    this.form.reset();
+  }
+
+  postArticulo() {
+    let art = this.form.value;
+    delete art.codigo;
+    this.articulos.push( art );
+    this.form.reset();
   }
 
 }
